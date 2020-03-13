@@ -1,0 +1,89 @@
+grafana_hadoop_datanode_dashboards_grafonnet:
+  - file_name: hadoop_datanode_ops
+    dashboard_name: "HDFS R/W ops"
+    time_from: "now-3h"
+    tags:
+      - hadoop
+      - hdfs
+      - datanode
+    templates:
+      - name: "instance"
+        query: "label_values(Hadoop_DataNode_ReadsFromLocalClient, instance)"
+        label: "Instance"
+        includeAll: "false"
+    panels:
+      - name: "Reads local/remote"
+        fill: 0
+        format: "short"
+        span: 6
+        gridpos_x: 0
+        gridpos_y: 0
+        gridpos_w: 12
+        gridpos_h: 7
+        min: 0
+        decimals: 2
+        targets:
+          - expr: 'irate(Hadoop_DataNode_ReadsFromLocalClient{instance="$instance"}[5m])'
+            legend_format: !unsafe "local"
+          - expr: 'irate(Hadoop_DataNode_ReadsFromRemoteClient{instance="$instance"}[5m])'
+            legend_format: !unsafe "remote"
+      - name: "Writes local/remote"
+        fill: 0
+        format: "short"
+        span: 6
+        gridpos_x: 12
+        gridpos_y: 0
+        gridpos_w: 12
+        gridpos_h: 7
+        min: 0
+        decimals: 2
+        targets:
+          - expr: 'irate(Hadoop_DataNode_WritesFromLocalClient{instance="$instance"}[5m])'
+            legend_format: !unsafe "local"
+          - expr: 'irate(Hadoop_DataNode_WritesFromRemoteClient{instance="$instance"}[5m])'
+            legend_format: !unsafe "remote"
+      - name: "Block reads/writes"
+        fill: 0
+        format: "short"
+        span: 6
+        gridpos_x: 0
+        gridpos_y: 4
+        gridpos_w: 24
+        gridpos_h: 7
+        min: 0
+        decimals: 2
+        targets:
+          - expr: 'irate(Hadoop_DataNode_ReadBlockOpNumOps{instance="$instance"}[5m])'
+            legend_format: !unsafe "reads"
+          - expr: 'irate(Hadoop_DataNode_WriteBlockOpNumOps{instance="$instance"}[5m])'
+            legend_format: !unsafe "writes"
+      - name: "Bytes read/written"
+        fill: 0
+        format: "decbytes"
+        span: 6
+        gridpos_x: 0
+        gridpos_y: 8
+        gridpos_w: 24
+        gridpos_h: 7
+        min: 0
+        decimals: 2
+        targets:
+          - expr: 'irate(Hadoop_DataNode_BytesRead{instance="$instance"}[5m])'
+            legend_format: !unsafe "read"
+          - expr: 'irate(Hadoop_DataNode_BytesWritten{instance="$instance"}[5m])'
+            legend_format: !unsafe "written"
+      - name: "Avg time"
+        fill: 0
+        format: "ms"
+        span: 6
+        gridpos_x: 0
+        gridpos_y: 16
+        gridpos_w: 24
+        gridpos_h: 7
+        min: 0
+        decimals: 2
+        targets:
+          - expr: 'Hadoop_DataNode_ReadBlockOpAvgTime{instance="$instance"}'
+            legend_format: !unsafe "reads"
+          - expr: 'Hadoop_DataNode_WriteBlockOpAvgTime{instance="$instance"}'
+            legend_format: !unsafe "writes"
